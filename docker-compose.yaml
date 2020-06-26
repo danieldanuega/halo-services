@@ -1,0 +1,20 @@
+version: "3.6"
+services:
+  halo-serving:
+    image: tensorflow/serving
+    ports: 
+      - "8500:8500"
+      - "8501:8501"
+    volumes:
+      # Model
+      - type: bind
+        source: ./models/FbDeepFace/
+        target: /models/deepface
+      # Configurations
+      - type: bind
+        source: ./serving.cfg
+        target: /models/serving.cfg
+    restart: on-failure
+    command: 
+      - --model_config_file=/models/serving.cfg
+      - --allow_version_labels_for_unavailable_models=true
