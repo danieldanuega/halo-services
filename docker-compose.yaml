@@ -2,7 +2,7 @@ version: "3.6"
 services:
   halo-serving:
     image: tensorflow/serving
-    ports: 
+    ports:
       - "8500:8500"
       - "8501:8501"
     volumes:
@@ -15,6 +15,21 @@ services:
         source: ./serving.cfg
         target: /models/serving.cfg
     restart: on-failure
-    command: 
+    command:
       - --model_config_file=/models/serving.cfg
       - --allow_version_labels_for_unavailable_models=true
+  core:
+    build:
+      context: .
+    # replicate `docker run -it` for dev.
+    stdin_open: true
+    tty: true
+    # ----------------------------------
+    depends_on:
+      - halo-serving
+    volumes:
+      - ".:/app"
+    restart: on-failure
+    ports:
+      - "9000:9000"
+    command: ["bash"]
