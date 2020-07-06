@@ -23,6 +23,11 @@ scrape_configs:
     static_configs:
       - targets: ["localhost:9090"]
 
+  - job_name: "haloserving"
+    scrape_interval: 5s
+    static_configs:
+      - targets: ["halo-serving:8501"]
+
 
 # alerting:
 #   alertmanagers:
