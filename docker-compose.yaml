@@ -1,8 +1,8 @@
 version: "3.6"
 
 volumes:
-  prometheus_data: {}
-  grafana_data: {}
+  prometheus_data:
+  grafana_data:
 
 networks:
   monitor-net:
@@ -23,31 +23,38 @@ services:
         target: /models/deepface
       # Configurations
       - type: bind
-        source: ./serving.cfg
-        target: /models/serving.cfg
+        source: ./serving.conf
+        target: /models/serving.conf
+      # Prometheus config
+      - type: bind
+        source: ./monitoring.conf
+        target: /models/monitoring.conf
     restart: on-failure
     networks:
       - monitor-net
       - haloserving-net
     command:
-      - "--model_config_file=/models/serving.cfg"
+      - "--model_config_file=/models/serving.conf"
       - "--allow_version_labels_for_unavailable_models=true"
+      - "--monitoring_config_file=/models/monitoring.conf"
   
-  core:
-    build:
-      context: .
-    # replicate `docker run -it` for dev.
-    stdin_open: true
-    tty: true
-    # ----------------------------------
-    depends_on:
-      - halo-serving
-    volumes:
-      - .:/app
-    restart: on-failure
-    ports:
-      - 9000:9000
-    command: ["bash"]
+  # core:
+  #   build:
+  #     context: .
+  #   # replicate `docker run -it` for dev.
+  #   stdin_open: true
+  #   tty: true
+  #   # ----------------------------------
+  #   depends_on:
+  #     - halo-serving
+  #   volumes:
+  #     - .:/app
+  #   networks: 
+  #     - haloserving-net
+  #   restart: on-failure
+  #   ports:
+  #     - 9000:9000
+  #   command: ["bash"]
 
   prometheus:
     image: prom/prometheus:latest
