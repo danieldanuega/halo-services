@@ -1,5 +1,3 @@
 Dockerfile
 docker-compose.yaml
 .gitignore
-.models
-serving.cfg

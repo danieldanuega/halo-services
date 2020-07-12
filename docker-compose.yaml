@@ -19,15 +19,15 @@ services:
     volumes:
       # Model
       - type: bind
-        source: ./models/FbDeepFace/
+        source: ./model_service/models/FbDeepFace/
         target: /models/deepface
       # Configurations
       - type: bind
-        source: ./serving.conf
+        source: ./model_service/serving.conf
         target: /models/serving.conf
       # Prometheus config
       - type: bind
-        source: ./monitoring.conf
+        source: ./model_service/monitoring.conf
         target: /models/monitoring.conf
     restart: on-failure
     networks:
@@ -37,29 +37,29 @@ services:
       - "--model_config_file=/models/serving.conf"
       - "--allow_version_labels_for_unavailable_models=true"
       - "--monitoring_config_file=/models/monitoring.conf"
-  
-  # core:
-  #   build:
-  #     context: .
-  #   # replicate `docker run -it` for dev.
-  #   stdin_open: true
-  #   tty: true
-  #   # ----------------------------------
-  #   depends_on:
-  #     - halo-serving
-  #   volumes:
-  #     - .:/app
-  #   networks: 
-  #     - haloserving-net
-  #   restart: on-failure
-  #   ports:
-  #     - 9000:9000
-  #   command: ["bash"]
+
+  core:
+    build:
+      context: ./core_service
+    # replicate `docker run -it` for dev.
+    stdin_open: true
+    tty: true
+    # ----------------------------------
+    # depends_on:
+    #   - halo-serving
+    volumes:
+      - ./core_service:/app
+    networks:
+      - haloserving-net
+    restart: on-failure
+    ports:
+      - 9000:9000
+    command: ["bash"]
 
   prometheus:
     image: prom/prometheus:latest
     volumes:
-      - ./prometheus:/etc/prometheus
+      - ./model_service/prometheus:/etc/prometheus
       - prometheus_data:/prometheus
     ports:
       - 9090:9090
@@ -85,10 +85,10 @@ services:
       - /sys:/host/sys:ro
       - /:/rootfs:ro
     command:
-      - '--path.procfs=/host/proc'
-      - '--path.rootfs=/rootfs'
-      - '--path.sysfs=/host/sys'
-      - '--collector.filesystem.ignored-mount-points=^/(sys|proc|dev|host|etc)($$|/)'
+      - "--path.procfs=/host/proc"
+      - "--path.rootfs=/rootfs"
+      - "--path.sysfs=/host/sys"
+      - "--collector.filesystem.ignored-mount-points=^/(sys|proc|dev|host|etc)($$|/)"
     restart: unless-stopped
     expose:
       - 9100
