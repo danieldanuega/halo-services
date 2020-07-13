@@ -12,7 +12,7 @@ URL = "http://10.3.189.64:8501/v1/models/deepface/versions/1"
 
 
 class FaceRecognition:
-    def __init__(self, database="../database"):
+    def __init__(self, database="./database"):
         self.database = database
 
         # Check if the representations of employee faces is exist or not
