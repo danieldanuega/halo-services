@@ -1,4 +1,4 @@
-from imagezmq.imagezmq import ImageSender
+import requests
 import os
 import cv2
 from PIL import Image
@@ -7,10 +7,11 @@ from helper import get_input_shape
 import helper
 import time
 import socket
-
-# from register import register
+from register import register
+import json
 
 FPS = 30
+URL = "http://127.0.0.1:9000"
 
 
 def gstreamer_pipeline(
@@ -52,7 +53,6 @@ def rekog():
     r = 180
     minWidthFace = 200
     isFreeze = False
-    imageSender = ImageSender(connect_to="tcp://127.0.0.1:5555")
 
     # Using webcam
     video = cv2.VideoCapture(0)
@@ -104,8 +104,13 @@ def rekog():
                 rekog_frame[y : y + h, x : x + w], get_input_shape(), stream=True
             )
             if img.shape[1:3] == get_input_shape():
-                result = imageSender.send_image_reqrep(socket.gethostname, img)
-                pred, _, score = result.partition("/")
+                data = json.dumps({"img": img.tolist()})
+                result = requests.post(URL, data=data)
+                result = result.json()
+                pred = result["pred"]
+                score = result["score"]
+                print(pred)
+                print(score)
 
             # Count until freeze
             f += 1

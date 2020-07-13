@@ -1,15 +1,22 @@
 from halo import FaceRecognition
-from imagezmq import ImageHub
-
+from sanic import Sanic
+from sanic.response import json
 
 # Initialize the model
 FR = FaceRecognition()
 
-imageHub = ImageHub()
+app = Sanic("Core microservice")
 
-while True:
-    print("Listening to client . . .")
-    _, img = imageHub.recv_image()
+
+@app.route("/", methods=["POST"])
+async def predict(request):
+    args = request.json
+    img = args["img"]
+
     pred, score = FR.predict(img)
-    result = pred + "/" + str(score)
-    imageHub.send_reply(bytes(result, encoding="utf-8"))
+    return json({"pred": pred, "score": score})
+
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=9000)
+

@@ -113,7 +113,7 @@ class FaceRecognition:
 
         # Hit tensorflow serving REST api
         try:
-            data = json.dumps({"inputs": img.tolist()})
+            data = json.dumps({"inputs": img})
             res = requests.post(URL + ":predict", data=data)
         except requests.HTTPError as err:
             pred = err
