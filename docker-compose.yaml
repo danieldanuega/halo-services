@@ -42,19 +42,19 @@ services:
     build:
       context: ./core_service
     # replicate `docker run -it` for dev.
-    stdin_open: true
-    tty: true
+    # stdin_open: true
+    # tty: true
     # ----------------------------------
-    # depends_on:
-    #   - halo-serving
-    volumes:
-      - ./core_service:/app
+    depends_on:
+      - halo-serving
+        # volumes:
+        # - ./core_service:/app
     networks:
       - haloserving-net
     restart: on-failure
     ports:
       - 9000:9000
-    command: ["bash"]
+        # command: ["bash"]
 
   prometheus:
     image: prom/prometheus:latest
