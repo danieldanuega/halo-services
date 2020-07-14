@@ -1,12 +1,11 @@
-import requests
 import os
 import cv2
 from PIL import Image
 import numpy as np
+import requests
 from helper import get_input_shape
 import helper
 import time
-import socket
 from register import register
 import json
 
@@ -63,12 +62,12 @@ def rekog():
         raise Exception("Error opening the camera")
 
     # Open the camera and get the camera size
-    _, temp = video.read()
+    ret, temp = video.read()
 
     # convert image to grayscale image
     gray_image = cv2.cvtColor(temp, cv2.COLOR_BGR2GRAY)
     # convert the grayscale image to binary image
-    _, thresh = cv2.threshold(gray_image, 127, 255, 0)
+    ret, thresh = cv2.threshold(gray_image, 127, 255, 0)
     # calculate moments of binary image
     M = cv2.moments(thresh)
     # calculate x,y coordinate of center
@@ -77,7 +76,7 @@ def rekog():
 
     while True:
         # Open camera for recognizing
-        _, frame = video.read()
+        ret, frame = video.read()
         rekog_frame = frame[CY - r : CY + r, CX - r : CX + r]
 
         # Draw rekog circle
@@ -105,8 +104,8 @@ def rekog():
             )
             if img.shape[1:3] == get_input_shape():
                 data = json.dumps({"img": img.tolist()})
-                result = requests.post(URL, data=data)
-                result = result.json()
+                response = requests.post(URL, data=data)
+                result = response.json()
                 pred = result["pred"]
                 score = result["score"]
                 print(pred)
@@ -177,7 +176,3 @@ def rekog():
 
     video.release()
     cv2.destroyAllWindows()
-
-
-if __name__ == "__main__":
-    rekog()

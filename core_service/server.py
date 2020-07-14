@@ -9,7 +9,7 @@ app = Sanic("Core microservice")
 
 
 @app.route("/", methods=["POST"])
-async def predict(request):
+def predict(request):
     args = request.json
     img = args["img"]
 
