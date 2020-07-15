@@ -8,7 +8,7 @@ FR = FaceRecognition()
 app = Sanic("Core microservice")
 
 
-@app.route("/", methods=["POST"])
+@app.route("/", methods=["GET"])
 def predict(request):
     args = request.json
     img = args["img"]

@@ -10,7 +10,7 @@ from register import register
 import json
 
 FPS = 30
-URL = "http://127.0.0.1:9000"
+URL = "http://10.3.189.64:9000"
 
 
 def gstreamer_pipeline(
