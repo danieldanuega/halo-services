@@ -104,7 +104,7 @@ def rekog():
             )
             if img.shape[1:3] == get_input_shape():
                 data = json.dumps({"img": img.tolist()})
-                response = requests.post(URL, data=data)
+                response = requests.get(URL, data=data)
                 result = response.json()
                 pred = result["pred"]
                 score = result["score"]
