@@ -45,8 +45,8 @@ services:
     # stdin_open: true
     # tty: true
     # ----------------------------------
-    depends_on:
-      - halo-serving
+    # depends_on:
+      # - halo-serving
         # volumes:
         # - ./core_service:/app
     networks:
